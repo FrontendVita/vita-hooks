@@ -1,0 +1,72 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="hooks/useLocalStorage" />
+
+# useLocalStorage()
+
+The useLocalStorage hook is a custom React hook that provides a simple way to persist data locally in a browser using the localStorage API. It allows you to store and retrieve data from localStorage in a declarative and easy-to-use manner within your React components.
+
+## The Hook
+
+```ts
+import { useCallback, useState } from "react";
+
+type UseLocalStorageOutput<T> = [T, (value: T) => void];
+
+const useLocalStorage = <T>(
+  key: string,
+  initialValue: T
+): UseLocalStorageOutput<T> => {
+  const [storedValue, setStoredValue] = useState(() => {
+    if (typeof window === "undefined") {
+      return initialValue;
+    }
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error(error);
+      return initialValue;
+    }
+  });
+
+  const setValue = useCallback(
+    (value: T) => {
+      try {
+        setStoredValue(value);
+
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(key, JSON.stringify(value));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [key]
+  );
+
+  return [storedValue, setValue];
+};
+
+export default useLocalStorage;
+```
+
+## Usage
+
+```tsx
+import { useLocalStorage } from "vita-hooks";
+
+const UseLocalStorageExample = () => {
+  const [count, setCount] = useLocalStorage("count", 0);
+
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
+  );
+};
+
+export default UseLocalStorageExample;
+```

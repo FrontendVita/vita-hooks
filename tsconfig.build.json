@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "rootDir": "./src"
+  },
+
+  "include": ["./src/hooks/**/*.ts"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.mdx", "./src/**/*.demo.tsx"]
+}
