@@ -10,6 +10,9 @@ export * from "./useIntersectionObserver/useIntersectionObserver";
 export { default as useLocalStorage } from "./useLocalStorage/useLocalStorage";
 export * from "./useLocalStorage/useLocalStorage";
 
+export { default as usePortal } from "./usePortal/usePortal";
+export * from "./usePortal/usePortal";
+
 export { default as useSessionStorage } from "./useSessionStorage/useSessionStorage";
 export * from "./useSessionStorage/useSessionStorage";
 
