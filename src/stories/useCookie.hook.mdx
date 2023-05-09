@@ -1,0 +1,145 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="hooks/useCookie" />
+
+# useCookie()
+
+The **`useCookie`** hook is a custom React hook that allows a React component to interact with browser cookies. Cookies are small pieces of data that a website can store on a user's computer or mobile device to remember certain information about the user, such as their preferences, login credentials, or shopping cart items.
+
+## The Hook
+
+```ts
+import { useCallback, useState } from "react";
+
+type UseCookieOutput = [
+  string,
+  (value: string, options?: CookieOptions) => void,
+  () => void
+];
+
+interface CookieOptions {
+  days?: number;
+  path?: string;
+  domain?: string;
+  SameSite?: "None" | "Lax" | "Strict";
+  Secure?: boolean;
+  HttpOnly?: boolean;
+}
+
+const isBrowser = typeof window !== "undefined";
+
+const stringifyOptions = (options: CookieOptions) =>
+  Object.keys(options).reduce((acc, key) => {
+    if (key === "days") {
+      return acc;
+    } else {
+      if (options[key as keyof CookieOptions] === false) {
+        return acc;
+      } else if (options[key as keyof CookieOptions] === true) {
+        return `${acc}; ${key}`;
+      } else {
+        return `${acc}; ${key}=${options[key as keyof CookieOptions]}`;
+      }
+    }
+  }, "");
+
+const setCookie = (
+  name: string,
+  value: string,
+  options?: CookieOptions
+): void => {
+  if (!isBrowser) return;
+
+  const optionsWithDefaults = {
+    days: 7,
+    path: "/",
+    ...options,
+  };
+
+  const expires = new Date(
+    Date.now() + optionsWithDefaults.days * 864e5
+  ).toUTCString();
+
+  document.cookie =
+    name +
+    "=" +
+    encodeURIComponent(value) +
+    "; expires=" +
+    expires +
+    stringifyOptions(optionsWithDefaults);
+};
+
+const getCookie = (name: string, initialValue: string = "") =>
+  (isBrowser &&
+    document.cookie.split("; ").reduce((r, v) => {
+      const parts = v.split("=");
+      return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+    }, "")) ||
+  initialValue;
+
+const useCookie = (key: string, initialValue?: string): UseCookieOutput => {
+  const [item, setItem] = useState(() => getCookie(key, initialValue));
+
+  const updateItem = useCallback(
+    (value: string, options?: CookieOptions) => {
+      setItem(value);
+      setCookie(key, value, options);
+    },
+    [key]
+  );
+
+  const deleteItem = useCallback(() => {
+    setItem("");
+    setCookie(key, "", { days: 0 });
+  }, [key]);
+
+  return [item, updateItem, deleteItem];
+};
+
+export default useCookie;
+```
+
+## Usage
+
+```tsx
+import useCookie from "./useCookie";
+
+const UseCookieExample = () => {
+  const [username, setUsername, removeUsername] = useCookie("username");
+
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const username = (event.target as any).elements.username.value;
+    setUsername(username);
+  };
+
+  const handleLogout = () => {
+    removeUsername();
+  };
+
+  return (
+    <div>
+      {username ? (
+        <div>
+          <p>Welcome, {username}!</p>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      ) : (
+        <form onSubmit={handleLogin}>
+          <label>
+            Username:
+            <input
+              style={{ border: "1px solid black" }}
+              type="text"
+              name="username"
+            />
+          </label>
+          <button type="submit">Login</button>
+        </form>
+      )}
+    </div>
+  );
+};
+
+export default UseCookieExample;
+```
