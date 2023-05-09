@@ -12,3 +12,6 @@ export * from "./useLocalStorage/useLocalStorage";
 
 export { default as useSessionStorage } from "./useSessionStorage/useSessionStorage";
 export * from "./useSessionStorage/useSessionStorage";
+
+export { default as useThrottle } from "./useThrottle/useThrottle";
+export * from "./useThrottle/useThrottle";
