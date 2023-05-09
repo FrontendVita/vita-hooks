@@ -14,7 +14,7 @@ const useSessionStorage = <T>(
   key: string,
   initialValue: T
 ): UseSessionStorageOutput<T> => {
-  const [storedValue, setStoredValue] = useState(() => {
+  const [value, setValue] = useState(() => {
     if (typeof window === "undefined") {
       return initialValue;
     }
@@ -28,7 +28,7 @@ const useSessionStorage = <T>(
     }
   });
 
-  const setValue = useCallback(
+  const setSessionStorageValue = useCallback(
     (value: T) => {
       try {
         window.sessionStorage.setItem(key, JSON.stringify(value));
@@ -36,12 +36,12 @@ const useSessionStorage = <T>(
         console.error(error);
       }
 
-      setStoredValue(value);
+      setValue(value);
     },
     [key]
   );
 
-  return [storedValue, setValue];
+  return [value, setSessionStorageValue];
 };
 
 export default useSessionStorage;

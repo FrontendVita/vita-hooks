@@ -78,22 +78,24 @@ const getCookie = (name: string, initialValue: string = "") =>
   initialValue;
 
 const useCookie = (key: string, initialValue?: string): UseCookieOutput => {
-  const [item, setItem] = useState(() => getCookie(key, initialValue));
+  const [cookieValue, setCookieValue] = useState(() =>
+    getCookie(key, initialValue)
+  );
 
-  const updateItem = useCallback(
+  const updateCookie = useCallback(
     (value: string, options?: CookieOptions) => {
-      setItem(value);
+      setCookieValue(value);
       setCookie(key, value, options);
     },
     [key]
   );
 
-  const deleteItem = useCallback(() => {
-    setItem("");
+  const deleteCookie = useCallback(() => {
+    setCookieValue("");
     setCookie(key, "", { days: 0 });
   }, [key]);
 
-  return [item, updateItem, deleteItem];
+  return [cookieValue, updateCookie, deleteCookie];
 };
 
 export default useCookie;

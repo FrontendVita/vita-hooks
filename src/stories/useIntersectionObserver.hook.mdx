@@ -1,0 +1,66 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="hooks/useIntersectionObserver" />
+
+# useIntersectionObserver()
+
+The **`useIntersectionObserver`** hook is a custom React hook that allows you to use the **`IntersectionObserver`** API to track the visibility of an element in the viewport. The **`IntersectionObserver`** API is a powerful tool that provides a way to asynchronously observe changes in the intersection of a target element with an ancestor element or with the viewport. This can be useful for a variety of scenarios, such as implementing lazy loading of images or triggering animations when an element comes into view.
+
+## The Hook
+
+```ts
+import { RefObject, useEffect, useState } from "react";
+
+type UseIntersectionObserverOutput = boolean;
+
+const useIntersectionObserver = (
+  ref: RefObject<Element>,
+  options?: IntersectionObserverInit
+): UseIntersectionObserverOutput => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const node = ref?.current;
+    const hasIOSupport = !!window.IntersectionObserver;
+
+    if (!hasIOSupport || !node) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    }, options);
+
+    observer.observe(node);
+
+    return () => {
+      observer.unobserve(node);
+    };
+  }, [options, ref]);
+
+  return isVisible;
+};
+
+export default useIntersectionObserver;
+```
+
+## Usage
+
+```tsx
+import { useRef } from "react";
+import useIntersectionObserver from "./useIntersectionObserver";
+
+const UseIntersectionObserverExample = () => {
+  const ref = useRef(null);
+  const isVisible = useIntersectionObserver(ref);
+
+  return (
+    <div>
+      <div style={{ height: "100vh" }}>Scroll down</div>
+      <div style={{ height: "100vh" }} ref={ref}>
+        <p>{isVisible ? "Element is on screen." : "Scroll more!"}</p>
+      </div>
+    </div>
+  );
+};
+
+export default UseIntersectionObserverExample;
+```
