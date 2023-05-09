@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="hooks/useSessionStorage" />
+
+# useSessionStorage()
+
+The **`useSessionStorage`** hook is a custom React hook that allows you to store and retrieve data in the session storage of a user's web browser. This hook provides a simple and convenient way to access session storage in your React components without having to deal with the complexities of the **`SessionStorage`** API.
+
+## The Hook
+
+```ts
+import { useCallback, useState } from "react";
+
+type UseSessionStorageOutput<T> = [T, (value: T) => void];
+
+const parseJSON = <T>(value: string | null): T | undefined => {
+  try {
+    return value === "undefined" ? undefined : JSON.parse(value ?? "");
+  } catch {
+    return undefined;
+  }
+};
+
+const useSessionStorage = <T>(
+  key: string,
+  initialValue: T
+): UseSessionStorageOutput<T> => {
+  const [storedValue, setStoredValue] = useState(() => {
+    if (typeof window === "undefined") {
+      return initialValue;
+    }
+
+    try {
+      const item = window.sessionStorage.getItem(key);
+      return item ? (parseJSON(item) as T) : initialValue;
+    } catch (error) {
+      console.error(error);
+      return initialValue;
+    }
+  });
+
+  const setValue = useCallback(
+    (value: T) => {
+      try {
+        window.sessionStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {
+        console.error(error);
+      }
+
+      setStoredValue(value);
+    },
+    [key]
+  );
+
+  return [storedValue, setValue];
+};
+
+export default useSessionStorage;
+```
+
+## Usage
+
+```tsx
+import useSessionStorage from "./useSessionStorage";
+
+const useSessionStorageExample = () => {
+  const [count, setCount] = useSessionStorage("count", 0);
+
+  const handleClick = () => {
+    setCount(count + 1);
+  };
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleClick}>Increment</button>
+    </div>
+  );
+};
+
+export default useSessionStorageExample;
+```
