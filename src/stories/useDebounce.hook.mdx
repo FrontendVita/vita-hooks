@@ -1,0 +1,66 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="hooks/useDebounce" />
+
+# useDebounce()
+
+The **`useDebounce`** hook is a custom hook in React that helps to throttle or debounce a function that is executed in response to some user input. It delays the execution of a function until a certain amount of time has elapsed after the last user input. This can be helpful in cases where the function is expensive to run, or when you want to prevent the function from being called too frequently, which can lead to performance issues.
+
+## The Hook
+
+```ts
+import { useEffect, useState } from "react";
+
+type UseDebounceOutput<T> = T;
+
+const useDebounce = <T>(value: T, delay?: number): UseDebounceOutput<T> => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setDebouncedValue(value), delay || 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
+export default useDebounce;
+```
+
+## Usage
+
+```tsx
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useDebounce } from "vita-hooks";
+
+const UseDebounceExample = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const handleSearchTermChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(event.target.value);
+    },
+    []
+  );
+
+  useEffect(() => {
+    // Do fetch here...
+    // Triggers when "debouncedSearchTerm" changes
+  }, [debouncedSearchTerm]);
+
+  return (
+    <div>
+      <input
+        type="text"
+        style={{ border: "1px solid black" }}
+        value={searchTerm}
+        onChange={handleSearchTermChange}
+      />
+    </div>
+  );
+};
+
+export default UseDebounceExample;
+```
