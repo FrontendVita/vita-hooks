@@ -4,6 +4,9 @@ export * from "./useCookie/useCookie";
 export { default as useDebounce } from "./useDebounce/useDebounce";
 export * from "./useDebounce/useDebounce";
 
+export { default as useDocumentTitle } from "./useDocumentTitle/useDocumentTitle";
+export * from "./useDocumentTitle/useDocumentTitle";
+
 export { default as useFetch } from "./useFetch/useFetch";
 export * from "./useFetch/useFetch";
 
