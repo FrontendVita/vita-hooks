@@ -1,6 +1,9 @@
 export { default as useCookie } from "./useCookie/useCookie";
 export * from "./useCookie/useCookie";
 
+export { default as useCopyToClipboard } from "./useCopyToClipboard/useCopyToClipboard";
+export * from "./useCopyToClipboard/useCopyToClipboard";
+
 export { default as useDebounce } from "./useDebounce/useDebounce";
 export * from "./useDebounce/useDebounce";
 
