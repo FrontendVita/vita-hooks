@@ -1,0 +1,39 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="hooks/useDocumentTitle" />
+
+# useDocumentTitle()
+
+The **`useDocumentTitle`** hook is a custom React hook that enables you to dynamically update the title of the HTML document within a React component. It is a useful hook for scenarios where you need to update the title based on the user's actions or data changes in the application.
+
+## The Hook
+
+```ts
+import { useEffect, useLayoutEffect } from "react";
+
+type UseDocumentTitleOutput = void;
+
+const useDocumentTitle = (title: string): UseDocumentTitleOutput => {
+  const useHook = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+  useHook(() => {
+    document.title = title;
+  }, [title]);
+};
+
+export default useDocumentTitle;
+```
+
+## Usage
+
+```tsx
+import { useDocumentTitle } from "vita-hooks";
+
+const UseCookieExample = () => {
+  useDocumentTitle("My new page title");
+
+  // rest of component code here
+};
+
+export default UseCookieExample;
+```

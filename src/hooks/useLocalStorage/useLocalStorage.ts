@@ -6,7 +6,7 @@ const useLocalStorage = <T>(
   key: string,
   initialValue: T
 ): UseLocalStorageOutput<T> => {
-  const [storedValue, setStoredValue] = useState(() => {
+  const [value, setValue] = useState(() => {
     if (typeof window === "undefined") {
       return initialValue;
     }
@@ -19,10 +19,10 @@ const useLocalStorage = <T>(
     }
   });
 
-  const setValue = useCallback(
+  const setLocalStorageValue = useCallback(
     (value: T) => {
       try {
-        setStoredValue(value);
+        setValue(value);
 
         if (typeof window !== "undefined") {
           window.localStorage.setItem(key, JSON.stringify(value));
@@ -34,7 +34,7 @@ const useLocalStorage = <T>(
     [key]
   );
 
-  return [storedValue, setValue];
+  return [value, setLocalStorageValue];
 };
 
 export default useLocalStorage;

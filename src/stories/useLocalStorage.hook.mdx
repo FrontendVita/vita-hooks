@@ -4,7 +4,7 @@ import { Meta } from "@storybook/blocks";
 
 # useLocalStorage()
 
-The useLocalStorage hook is a custom React hook that provides a simple way to persist data locally in a browser using the localStorage API. It allows you to store and retrieve data from localStorage in a declarative and easy-to-use manner within your React components.
+The **`useLocalStorage`** hook is a custom React hook that provides a simple way to persist data locally in a browser using the **`localStorage`** API. It allows you to store and retrieve data from **`localStorage`** in a declarative and easy-to-use manner within your React components.
 
 ## The Hook
 
@@ -17,7 +17,7 @@ const useLocalStorage = <T>(
   key: string,
   initialValue: T
 ): UseLocalStorageOutput<T> => {
-  const [storedValue, setStoredValue] = useState(() => {
+  const [value, setValue] = useState(() => {
     if (typeof window === "undefined") {
       return initialValue;
     }
@@ -30,10 +30,10 @@ const useLocalStorage = <T>(
     }
   });
 
-  const setValue = useCallback(
+  const setLocalStorageValue = useCallback(
     (value: T) => {
       try {
-        setStoredValue(value);
+        setValue(value);
 
         if (typeof window !== "undefined") {
           window.localStorage.setItem(key, JSON.stringify(value));
@@ -45,7 +45,7 @@ const useLocalStorage = <T>(
     [key]
   );
 
-  return [storedValue, setValue];
+  return [value, setLocalStorageValue];
 };
 
 export default useLocalStorage;

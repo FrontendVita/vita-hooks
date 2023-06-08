@@ -1,0 +1,66 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="hooks/usePortal" />
+
+# usePortal()
+
+The **`usePortal`** hook is a custom React hook that can be used to create a portal in a React application. A portal is a way to render content outside of the normal component hierarchy, allowing you to render content in a different part of the DOM tree than the component that created it.
+
+## The Hook
+
+```ts
+import { useEffect, useState } from "react";
+
+type UsePortalOutput = HTMLDivElement | null;
+
+const usePortal = (id = "unknown"): UsePortalOutput => {
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const div = document.createElement("div");
+    div.setAttribute("id", `Portal_${id}`);
+    document.body.appendChild(div);
+    setContainer(div);
+
+    return () => {
+      document.body.removeChild(div);
+    };
+  }, [id]);
+
+  return container;
+};
+
+export default usePortal;
+```
+
+## Usage
+
+```tsx
+import ReactDOM from "react-dom";
+import { useState } from "react";
+import { usePortal } from "vita-hooks";
+
+const UsePortalExample = () => {
+  const [isOpen, setOpen] = useState(false);
+  const container = usePortal("cool-modal");
+
+  return (
+    <div>
+      <button onClick={() => setOpen(true)}>Open modal</button>
+
+      {isOpen
+        ? container &&
+          ReactDOM.createPortal(
+            <div style={{ width: "100%" }}>
+              <h1>Hello World from the modal!!!</h1>
+              <button onClick={() => setOpen(false)}>Close Modal</button>
+            </div>,
+            container
+          )
+        : null}
+    </div>
+  );
+};
+
+export default UsePortalExample;
+```
